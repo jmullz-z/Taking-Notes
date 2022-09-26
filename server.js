@@ -38,4 +38,40 @@ app.post("/api/notes", function(req,res) {
         writeFileAsync(".develop/db/db.json", JSON.stringify(notes))
         res.json(note);
     })
+});
+
+//APT Route | "DELETE" request
+app.delete("/api/notes/:id", function(req, res) {
+    const idToDelete = parseInt(req.params,id);
+    readFileAsync("./develop/db/debugger.json", "utf8").then(function(data) {
+        const notes = [].concat(JSON.parse(data));
+        const newNotesData = []
+        for (let i= 0; i<notes.length; i++) {
+            if(idToDelete !== notes[i].id) {
+                newNotesData.push(notes[i])
+            }
+        }
+        return newNotesData
+    }).then(function(notes) {
+        writeFileAsync("./develop/db/db.json", JSON.stringify(notes))
+        res.send('saved success!');
+    })
 })
+
+// HTML Routes
+app.get("/notes", function(req, res) {
+    res.sendFile(path.join(__dirname, "./develop/public/notes.html"));
+    });
+
+    app.get("/", function(req, res) {
+        res.sendFile(path.join(__dirname, "./develop/public/index.html"));
+    });
+
+    app.get("*", function(req, res) {
+        res.sendFile(path.join(__dirname, "./develop/public/index.html"));
+    });
+
+    // Listening
+    app.listen(PORT, function() {
+        console.log("App listening on PORT" + PORT);
+    });
