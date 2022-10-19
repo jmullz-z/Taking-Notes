@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const util = require("util");
+const {notes}=require("./db/db.json")
 
 //Handling Asychorous Processes
 const readFileAsync = util.promisify(fs.readFile);
@@ -10,21 +11,22 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 //setting up server
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 //static middleware
-app.use(express.static("./devlop/public"));
+app.use(express.static("public"));
 
 //API route and "GET" request
 app.get("/api/notes", function(req, res) {
-    readFileAsync("./db/db.json", "utf-8").then(function(data) {
-        notes = [].concat(JSON.parse(data))
-        res.json(notes);
-    })
-});
+    // readFileAsync("./db/db.json", "utf-8").then(function(data) {
+    //     notes = [].concat(JSON.parse(data))
+    let results=notes
+        res.json(results);
+    });
+
 
 //API route with "POST" request
 app.post("/api/notes", function(req,res) {
