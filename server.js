@@ -3,7 +3,9 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const util = require("util");
-const {notes}=require("./db/db.json")
+const {notes}=require("./db/db.json");
+const { request } = require("http");
+const uniqid=require("uniqid")
 
 //Handling Asychorous Processes
 const readFileAsync = util.promisify(fs.readFile);
@@ -30,34 +32,44 @@ app.get("/api/notes", function(req, res) {
 
 //API route with "POST" request
 app.post("/api/notes", function(req,res) {
-    const notes = req.body;
-    readFileAsync("./db/db.json", "utf8").then(function(data) {
-        const notes = [].concat(JSON.parse(data));
-        notes.id = notes.length + 1
-        notes.push(note);
-        return notes
-    }).then(function(notes) {
-        writeFileAsync("./db/db.json", JSON.stringify(notes))
-        res.json(note);
-    })
+    req.body.id=uniqid()
+    // const notes = req.body;
+    // readFileAsync("./db/db.json", "utf8").then(function(data) {
+    //     const notes = [].concat(JSON.parse(data));
+    //     notes.id = notes.length + 1
+    //     notes.push(note);
+    //     return notes
+    // }).then(function(notes) {
+    //     writeFileAsync("./db/db.json", JSON.stringify(notes))
+    const note=req.body
+    notes.push(note)
+    fs.writeFileSync(
+        path.join(__dirname, "./db/db.json"),
+        JSON.stringify({notes}, null, 2)
+    )   
+    res.json(note);
 });
 
 //APT Route | "DELETE" request
 app.delete("/api/notes/:id", function(req, res) {
     const idToDelete = parseInt(req.params,id);
-    readFileAsync("/db/debugger.json", "utf8").then(function(data) {
-        const notes = [].concat(JSON.parse(data));
-        const newNotesData = []
-        for (let i= 0; i<notes.length; i++) {
-            if(idToDelete !== notes[i].id) {
-                newNotesData.push(notes[i])
+    // readFileAsync("/db/debugger.json", "utf8").then(function(data) {
+    //    const newNotesData = []
+    //   const notes = [].concat(JSON.parse(data));
+      for (let i= 0; i<notes.length; i++) {
+            if(idToDelete === notes.id) {
+                // newNotesData.push(notes[i])
+                notes.splice(i,1)
+                fs.writeFileSync(
+                    path.join(__dirname, "./db/db.json"),
+                    JSON.stringify({notes}, null, 2)
+                )   
             }
         }
-        return newNotesData
-    }).then(function(notes) {
-        writeFileAsync("./db/db.json", JSON.stringify(notes))
+    //     return newNotesData
+    // }).then(function(notes) {
+    //     writeFileAsync("./db/db.json", JSON.stringify(notes))
         res.send('saved success!');
-    })
 })
 
 // HTML Routes
