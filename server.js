@@ -52,12 +52,12 @@ app.post("/api/notes", function(req,res) {
 
 //APT Route | "DELETE" request
 app.delete("/api/notes/:id", function(req, res) {
-    const idToDelete = parseInt(req.params,id);
+    const idToDelete = req.params.id;
     // readFileAsync("/db/debugger.json", "utf8").then(function(data) {
     //    const newNotesData = []
     //   const notes = [].concat(JSON.parse(data));
       for (let i= 0; i<notes.length; i++) {
-            if(idToDelete === notes.id) {
+            if(idToDelete ===notes[i].id) {
                 // newNotesData.push(notes[i])
                 notes.splice(i,1)
                 fs.writeFileSync(
